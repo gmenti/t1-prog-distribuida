@@ -1,17 +1,17 @@
-all:			AdditionClient.class AdditionServer.class \
-			AdditionInterfaceClient.class AdditionInterfaceServer.class
+all:			Jogador.class Jogo.class \
+			JogadorInterface.class JogoInterface.class
 
-AdditionInterfaceClient.class:	AdditionInterfaceClient.java
-			@javac AdditionInterfaceClient.java
+JogadorInterface.class:	JogadorInterface.java
+			@javac JogadorInterface.java
 
-AdditionInterfaceServer.class:	AdditionInterfaceServer.java
-			@javac AdditionInterfaceServer.java
+JogoInterface.class:	JogoInterface.java
+			@javac JogoInterface.java
 
-AdditionClient.class:	AdditionClient.java
-			@javac AdditionClient.java
+Jogador.class:	Jogador.java
+			@javac Jogador.java
 
-AdditionServer.class:	AdditionServer.java
-			@javac AdditionServer.java
+Jogo.class:	Jogo.java
+			@javac Jogo.java
 
 clean:
 			@rm -f *.class *~
