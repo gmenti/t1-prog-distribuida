@@ -6,7 +6,7 @@ class Jogo extends UnicastRemoteObject implements JogoInterface {
   public static final int port = 52369;
   public static String serverIp;
   public static int numPlayers;
-  public static int maxPlays = 10;
+  public static int maxPlays;
   public static Jogo jogo;
   public static long verifiedAt = 0;
 
@@ -19,6 +19,58 @@ class Jogo extends UnicastRemoteObject implements JogoInterface {
   public boolean[] finished;
   public int[] points;
   public boolean[] connected;
+
+  public static void main(String[] args) {
+    if (args.length != 3) {
+      System.out.println("Usage: java Jogo <server ip> <num players> <play amount>");
+      System.exit(1);
+    }
+
+    serverIp = args[0];
+    numPlayers = Integer.parseInt(args[1]);
+    maxPlays = Integer.parseInt(args[2]);
+
+    try {
+      System.setProperty("java.rmi.server.hostname", serverIp);
+      LocateRegistry.createRegistry(port);
+      System.out.println("java RMI registry created.");
+    } catch (RemoteException e) {
+      System.out.println("java RMI registry already exists.");
+    }
+
+    try {
+      jogo = new Jogo();
+      String serverHost = "rmi://" + serverIp + ":" + port + "/jogo";
+      Naming.rebind(serverHost, jogo);
+      System.out.println("Server is ready at: " + serverHost);
+
+      while (true) {
+
+        // inicia jogo automaticamente quando as vagas estiverem preenchidas
+        if (!jogo.canJoin() && !jogo.started) {
+          jogo.startGame();
+        }
+
+        // finaliza o jogo caso todos os jogadores ja tenham finalizado
+        if (jogo.started && jogo.isAllPlayersFinished()) {
+          jogo.endGame();
+        }
+
+        // verifica os jogadores a cada 5 segundos
+        if (System.currentTimeMillis() - verifiedAt >= 5000) {
+          jogo.verifyAllPlayers();
+          verifiedAt = System.currentTimeMillis();
+        }
+
+        // sleep para liberar a thread
+        Thread.sleep(1);
+      }
+  
+    } catch (Exception e) {
+      System.out.println("Serverfailed: " + e);
+      System.exit(-1);
+    }
+  }
 
   public Jogo() throws RemoteException {
     removeAllPlayers();
@@ -121,51 +173,6 @@ class Jogo extends UnicastRemoteObject implements JogoInterface {
     }
   }
 
-  public static void main(String[] args) {
-    if (args.length != 2) {
-      System.out.println("Usage: java Jogo <server ip> <num players>");
-      System.exit(1);
-    }
-
-    serverIp = args[0];
-    numPlayers = Integer.parseInt(args[1]);
-
-    try {
-      System.setProperty("java.rmi.server.hostname", serverIp);
-      LocateRegistry.createRegistry(port);
-      System.out.println("java RMI registry created.");
-    } catch (RemoteException e) {
-      System.out.println("java RMI registry already exists.");
-    }
-
-    try {
-      jogo = new Jogo();
-      String serverHost = "rmi://" + serverIp + ":" + port + "/jogo";
-      Naming.rebind(serverHost, jogo);
-      System.out.println("Server is ready at: " + serverHost);
-
-      while (true) {
-        if (!jogo.canJoin() && !jogo.started) {
-          jogo.startGame();
-        }
-
-        if (jogo.started && jogo.isAllPlayersFinished()) {
-          jogo.endGame();
-        }
-
-        if (System.currentTimeMillis() - verifiedAt >= 5000) {
-          jogo.verifyAllPlayers();
-          verifiedAt = System.currentTimeMillis();
-        }
-
-        Thread.sleep(1);
-      }
-    } catch (Exception e) {
-      System.out.println("Serverfailed: " + e);
-      System.exit(-1);
-    }
-  }
-
   public int registra() throws RemoteException {
     if (!canJoin()) {
       return -1;
@@ -191,7 +198,7 @@ class Jogo extends UnicastRemoteObject implements JogoInterface {
       return -1;
     plays[id] += 1;
     System.out.println("Player #" + id + " played " + plays[id] + " times");
-    if (Math.random() <= 0.03) {
+    if (Math.random() > 0.5) {
       jogadores[id].bonifica();
       points[id] += 1;
       System.out.println("Player #" + id + " received bonification points=" + points[id]);
