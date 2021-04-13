@@ -65,7 +65,7 @@ class Jogo extends UnicastRemoteObject implements JogoInterface {
         // sleep para liberar a thread
         Thread.sleep(1);
       }
-  
+
     } catch (Exception e) {
       System.out.println("Serverfailed: " + e);
       System.exit(-1);
@@ -168,7 +168,7 @@ class Jogo extends UnicastRemoteObject implements JogoInterface {
         System.out.println("Player verified, id=" + i);
       } catch (Exception e) {
         ids[i] = -1;
-        System.out.println("Player disconnected, id=" + i);
+        System.out.println("Player disconnected, id=" + i + " reason=" + e);
       }
     }
   }

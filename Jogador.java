@@ -81,7 +81,8 @@ class Jogador extends UnicastRemoteObject implements JogadorInterface {
 			}
 
 		} catch (Exception e) {
-			System.out.println("Unexpected error ocurred: " + e);
+			System.out.println("Unexpected error ocurred: ");
+			e.printStackTrace();
 			System.exit(-1);
 		}
 	}
