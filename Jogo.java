@@ -125,7 +125,6 @@ class Jogo extends UnicastRemoteObject implements JogoInterface {
       if (ids[i] == -1)
         continue;
       try {
-        makeConnection(i);
         jogadores[i].inicia();
         System.out.println("Player init, id=" + i);
       } catch (Exception e) {
@@ -166,7 +165,6 @@ class Jogo extends UnicastRemoteObject implements JogoInterface {
       if (ids[i] == -1)
         continue;
       try {
-        makeConnection(i);
         jogadores[i].verifica();
         System.out.println("Player verified, id=" + i);
       } catch (Exception e) {
@@ -207,7 +205,6 @@ class Jogo extends UnicastRemoteObject implements JogoInterface {
     System.out.println("Player #" + id + " played " + plays[id] + " times");
     if (Math.random() > 0.5) {
       try {
-        makeConnection(id);
         jogadores[id].bonifica();
         points[id] += 1;
         System.out.println("Player #" + id + " received bonification points=" + points[id]);
