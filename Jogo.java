@@ -1,3 +1,4 @@
+import java.net.MalformedURLException;
 import java.rmi.*;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
@@ -89,10 +90,9 @@ class Jogo extends UnicastRemoteObject implements JogoInterface {
     return !started && getDisponibleId() >= 0;
   }
 
-  private void addPlayer(int id, String hostname, JogadorInterface jogador) {
+  private void addPlayer(int id, String hostname) {
     ids[id] = id;
     hostnames[id] = hostname;
-    jogadores[id] = jogador;
     plays[id] = 0;
     finished[id] = false;
     points[id] = 0;
@@ -124,6 +124,7 @@ class Jogo extends UnicastRemoteObject implements JogoInterface {
       if (ids[i] == -1)
         continue;
       try {
+        makeConnection(i);
         jogadores[i].inicia();
         System.out.println("Player init, id=" + i);
       } catch (Exception e) {
@@ -164,6 +165,7 @@ class Jogo extends UnicastRemoteObject implements JogoInterface {
       if (ids[i] == -1)
         continue;
       try {
+        makeConnection(i);
         jogadores[i].verifica();
         System.out.println("Player verified, id=" + i);
       } catch (Exception e) {
@@ -173,16 +175,21 @@ class Jogo extends UnicastRemoteObject implements JogoInterface {
     }
   }
 
+  private void makeConnection(int id) throws RemoteException, MalformedURLException, NotBoundException {
+    String connectLocation = "rmi://" + hostnames[id] + ":" + port + "/jogador";
+    System.out.println("Connecting to player at : " + connectLocation);
+    JogadorInterface jogador = (JogadorInterface) Naming.lookup(connectLocation);
+    jogadores[id] = jogador;
+  }
+
   public int registra(String hostname) throws RemoteException {
     if (!canJoin()) {
       return -1;
     }
     int id = getDisponibleId();
     try {
-      String connectLocation = "rmi://" + hostname + ":" + port + "/jogador";
-      System.out.println("Connecting to player at : " + connectLocation);
-      JogadorInterface jogador = (JogadorInterface) Naming.lookup(connectLocation);
-      addPlayer(id, hostname, jogador);
+      addPlayer(id, hostname);
+      makeConnection(id);
       System.out.println("Receive register from " + hostname + ", id=" + id);
       return id;
     } catch (Exception e) {
@@ -198,9 +205,14 @@ class Jogo extends UnicastRemoteObject implements JogoInterface {
     plays[id] += 1;
     System.out.println("Player #" + id + " played " + plays[id] + " times");
     if (Math.random() > 0.5) {
-      jogadores[id].bonifica();
-      points[id] += 1;
-      System.out.println("Player #" + id + " received bonification points=" + points[id]);
+      try {
+        makeConnection(id);
+        jogadores[id].bonifica();
+        points[id] += 1;
+        System.out.println("Player #" + id + " received bonification points=" + points[id]);
+      } catch (Exception e) {
+        System.out.println("Failed to give bonification to player #" + id + ", reason: " + e);
+      }
     }
     return plays[id];
   }
