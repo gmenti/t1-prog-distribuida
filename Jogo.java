@@ -1,6 +1,7 @@
 import java.net.MalformedURLException;
 import java.rmi.*;
 import java.rmi.registry.LocateRegistry;
+import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
 
 class Jogo extends UnicastRemoteObject implements JogoInterface {
@@ -175,9 +176,9 @@ class Jogo extends UnicastRemoteObject implements JogoInterface {
     }
   }
 
-  private void makeConnection(int id) throws RemoteException, MalformedURLException, NotBoundException {
+  private void makeConnection(int id) throws RemoteException, MalformedURLException, NotBoundException, ServerNotActiveException {
     String connectLocation = "rmi://" + hostnames[id] + ":" + port + "/jogador";
-    System.out.println("Connecting to player at : " + connectLocation);
+    System.out.println("Connecting to player at : " + connectLocation + " - " + getClientHost());
     JogadorInterface jogador = (JogadorInterface) Naming.lookup(connectLocation);
     jogadores[id] = jogador;
   }
