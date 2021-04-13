@@ -57,17 +57,26 @@ class Jogador extends UnicastRemoteObject implements JogadorInterface {
 			System.out.println("Registered to server, received id= " + id);
 
 			while (true) {
+			
+				// executa jogadas caso a partida tenha iniciado
 				if (jogador.started) {
+
+					// trava execução durante 250ms à 950ms
 					int randomTime = ThreadLocalRandom.current().nextInt(250, 950);
 					Thread.sleep(randomTime);
+				
 					int played = jogo.joga(id);
 					System.out.println("'Joga' executed id=" + id);
+
+					// caso tenha atingido limite de jogadas, então finaliza a partida
 					if (played == -1) {
 						jogo.finaliza(id);
 						jogador.started = false;
 						System.out.println("'Finaliza' executed id=" + id);
 					}
 				}
+
+				// sleep para liberar thread
 				Thread.sleep(1);
 			}
 
