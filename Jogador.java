@@ -49,7 +49,7 @@ class Jogador extends UnicastRemoteObject implements JogadorInterface {
 			Naming.rebind(client, jogador);
 			System.out.println("Player server is ready on " + client);
 
-			int id = jogo.registra();
+			int id = jogo.registra(clientIp);
 			if (id == -1) {
 				throw new Exception("Server is full, try connect later");
 			}

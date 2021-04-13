@@ -1,7 +1,7 @@
 import java.rmi.*;
 
 public interface JogoInterface extends Remote {
-  public int registra() throws RemoteException;
+  public int registra(String hostname) throws RemoteException;
 
   public int joga(int id) throws RemoteException;
 

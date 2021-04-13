@@ -173,13 +173,12 @@ class Jogo extends UnicastRemoteObject implements JogoInterface {
     }
   }
 
-  public int registra() throws RemoteException {
+  public int registra(String hostname) throws RemoteException {
     if (!canJoin()) {
       return -1;
     }
     int id = getDisponibleId();
     try {
-      String hostname = getClientHost();
       String connectLocation = "rmi://" + hostname + ":" + port + "/jogador";
       System.out.println("Connecting to player at : " + connectLocation);
       JogadorInterface jogador = (JogadorInterface) Naming.lookup(connectLocation);
