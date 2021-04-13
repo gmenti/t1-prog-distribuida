@@ -23,7 +23,7 @@ class Jogador extends UnicastRemoteObject implements JogadorInterface {
 		String clientIp = args[1];
 
 		try {
-			System.setProperty("java.rmi.server.hostname", serverIp);
+			System.setProperty("java.rmi.server.hostname", clientIp);
 			LocateRegistry.createRegistry(port);
 			System.out.println("Java RMI registry created.");
 		} catch (RemoteException e) {
