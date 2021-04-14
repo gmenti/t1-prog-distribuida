@@ -203,7 +203,7 @@ class Jogo extends UnicastRemoteObject implements JogoInterface {
       return -1;
     plays[id] += 1;
     System.out.println("Player #" + id + " played " + plays[id] + " times");
-    if (Math.random() > 0.5) {
+    if (Math.random() > 0.3) {
       try {
         jogadores[id].bonifica();
         points[id] += 1;
@@ -219,8 +219,9 @@ class Jogo extends UnicastRemoteObject implements JogoInterface {
     if (!started || ids[id] == -1 || finished[id]) {
       return -1;
     }
-    removePlayer(id);
-    return 0;
+    plays[id] += 1;
+    System.out.println("Player #" + id + "  passed turn");
+    return plays[id];
   }
 
   public int finaliza(int id) throws RemoteException {
