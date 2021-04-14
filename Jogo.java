@@ -174,8 +174,8 @@ class Jogo extends UnicastRemoteObject implements JogoInterface {
     }
   }
 
-  private void makeConnection(int id) throws RemoteException, MalformedURLException, NotBoundException, ServerNotActiveException {
-    String connectLocation = "rmi://" + hostnames[id] + ":" + port + "/jogador";
+  private void makeConnection(int id, String hostname) throws RemoteException, MalformedURLException, NotBoundException, ServerNotActiveException {
+    String connectLocation = "rmi://" + hostname + ":" + port + "/jogador";
     System.out.println("Connecting to player at : " + connectLocation + " - " + getClientHost());
     JogadorInterface jogador = (JogadorInterface) Naming.lookup(connectLocation);
     jogadores[id] = jogador;
@@ -187,8 +187,8 @@ class Jogo extends UnicastRemoteObject implements JogoInterface {
     }
     int id = getDisponibleId();
     try {
+      makeConnection(id, hostname);
       addPlayer(id, hostname);
-      makeConnection(id);
       System.out.println("Receive register from " + hostname + ", id=" + id);
       return id;
     } catch (Exception e) {
