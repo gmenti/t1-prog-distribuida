@@ -69,7 +69,7 @@ class Jogador extends UnicastRemoteObject implements JogadorInterface {
 					if (Math.random() <= 0.1) {
 						try {
 							played = jogo.desiste(id);
-							System.out.println("Player #" + id + "  passed turn");
+							System.out.println("'Desiste' executed id=" + id);
 						} catch (Exception e) {
 							System.out.println("Failed to give pass turn of player #" + id + ", reason: " + e);
 						}

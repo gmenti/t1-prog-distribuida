@@ -216,6 +216,7 @@ class Jogo extends UnicastRemoteObject implements JogoInterface {
   }
 
   public int desiste(int id) throws RemoteException {
+    System.out.println("Receive (desiste) from player #" + id);
     if (!started || ids[id] == -1 || finished[id]) {
       return -1;
     }
